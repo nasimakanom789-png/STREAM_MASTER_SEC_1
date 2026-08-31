@@ -1,0 +1,290 @@
+{
+  "settings": {
+    "master_admin_key": "RRRPANEL"
+  },
+  "subadmins": [
+    {
+      "username": "ww",
+      "passwordHash": "$2a$10$hYGy4iauhohSkipg89TXXOPUHnRYbL/dC/mybGllBXnWQjF4VB4KO",
+      "plainPassword": "11",
+      "note": "",
+      "credits": 0,
+      "createdAt": "2026-08-28T19:03:29.130Z"
+    },
+    {
+      "username": "arahi",
+      "passwordHash": "$2a$10$wytuIFcml.RTE0RZ6bKUkemhHcyl9BVwiaywoXMq78m8mJIPd4yhq",
+      "plainPassword": "111",
+      "note": "",
+      "credits": 17,
+      "createdAt": "2026-08-28T09:02:20.321Z",
+      "updatedAt": "2026-08-28T09:02:56.950Z"
+    }
+  ],
+  "fetchers": [
+    {
+      "username": "fetcher_demo",
+      "passwordHash": "$2a$10$OIIbA4qddPLTz4Gv/Gj0heg2hMHwQxsUshH3OzXGCvBgFwMDKrTvm",
+      "plainPassword": "fetcher123",
+      "note": "Auto Ingestion Bot",
+      "permission_days": 30,
+      "createdAt": "2026-08-27T16:45:14.496Z"
+    },
+    {
+      "username": "fast_provisioner",
+      "passwordHash": "$2a$10$OIIbA4qddPLTz4Gv/Gj0heg2hMHwQxsUshH3OzXGCvBgFwMDKrTvm",
+      "plainPassword": "fetcher123",
+      "note": "Fast 7-Day Access Worker",
+      "permission_days": 7,
+      "createdAt": "2026-08-27T16:45:14.496Z"
+    }
+  ],
+  "licenses": [
+    {
+      "uid": "asdassd",
+      "name": "213131313",
+      "days": 30,
+      "expires_at": "2026-09-27T09:02:47.886Z",
+      "created_by": "arahi",
+      "owner_role": "sub_admin",
+      "createdAt": "2026-08-28T09:02:47.886Z"
+    },
+    {
+      "uid": "882910384",
+      "name": "asda",
+      "days": 90,
+      "expires_at": "2026-11-26T09:01:25.003Z",
+      "created_by": "ADMIN",
+      "owner_role": "main_admin",
+      "createdAt": "2026-08-28T09:01:25.003Z",
+      "updatedAt": "2026-08-28T09:01:34.812Z"
+    },
+    {
+      "uid": "asdasd",
+      "name": "aasd",
+      "days": 30,
+      "expires_at": "2026-09-26T16:49:23.088Z",
+      "created_by": "reseller_demo",
+      "owner_role": "sub_admin",
+      "createdAt": "2026-08-27T16:49:23.088Z"
+    },
+    {
+      "uid": "UID-882910384",
+      "name": "Shadow Assassin",
+      "days": 30,
+      "expires_at": "2026-09-21T16:45:14.490Z",
+      "created_by": "ADMIN",
+      "owner_role": "main_admin",
+      "createdAt": "2026-08-27T16:45:14.496Z"
+    },
+    {
+      "uid": "UID-559102482",
+      "name": "Cyber Falcon",
+      "days": 7,
+      "expires_at": "2026-08-31T16:45:14.490Z",
+      "created_by": "reseller_demo",
+      "owner_role": "sub_admin",
+      "createdAt": "2026-08-27T16:45:14.496Z"
+    },
+    {
+      "uid": "UID-110293847",
+      "name": "Vortex Ghost",
+      "days": 15,
+      "expires_at": "2026-08-25T16:45:14.490Z",
+      "created_by": "fetcher_demo",
+      "owner_role": "fetcher",
+      "createdAt": "2026-08-27T16:45:14.496Z"
+    }
+  ],
+  "creditAuditLog": [
+    {
+      "username": "arahi",
+      "change": "-1",
+      "balAfter": 17,
+      "reason": "UID Activation (1232123)",
+      "date": "28/08/2026, 15:02:56"
+    },
+    {
+      "username": "arahi",
+      "change": "-1",
+      "balAfter": 18,
+      "reason": "UID Activation (13123212)",
+      "date": "28/08/2026, 15:02:53"
+    },
+    {
+      "username": "arahi",
+      "change": "-1",
+      "balAfter": 19,
+      "reason": "UID Activation (asdassd)",
+      "date": "28/08/2026, 15:02:47"
+    },
+    {
+      "username": "arahi",
+      "change": "+20",
+      "balAfter": 20,
+      "reason": "Initial Account Balance",
+      "date": "28/08/2026, 15:02:20"
+    },
+    {
+      "username": "apex_streamer",
+      "change": "+20",
+      "balAfter": 240,
+      "reason": "Admin Manual Top-Up",
+      "date": "28/08/2026, 15:01:58"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "-1",
+      "balAfter": 69,
+      "reason": "UID Activation (UID-RESELLER-1111)",
+      "date": "28/08/2026, 14:57:59"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+50",
+      "balAfter": 70,
+      "reason": "Admin Manual Top-Up",
+      "date": "28/08/2026, 14:57:59"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+20",
+      "balAfter": 20,
+      "reason": "Initial Account Balance",
+      "date": "28/08/2026, 14:57:59"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "-1",
+      "balAfter": 69,
+      "reason": "UID Activation (UID-RESELLER-1111)",
+      "date": "28/08/2026, 14:44:27"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+50",
+      "balAfter": 70,
+      "reason": "Admin Manual Top-Up",
+      "date": "28/08/2026, 14:44:27"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+20",
+      "balAfter": 20,
+      "reason": "Initial Account Balance",
+      "date": "28/08/2026, 14:44:27"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "-1",
+      "balAfter": 69,
+      "reason": "UID Activation (UID-RESELLER-1111)",
+      "date": "27/08/2026, 22:55:12"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+50",
+      "balAfter": 70,
+      "reason": "Admin Manual Top-Up",
+      "date": "27/08/2026, 22:55:12"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+20",
+      "balAfter": 20,
+      "reason": "Initial Account Balance",
+      "date": "27/08/2026, 22:55:12"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "-1",
+      "balAfter": 69,
+      "reason": "UID Activation (UID-RESELLER-1111)",
+      "date": "27/08/2026, 22:54:54"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+50",
+      "balAfter": 70,
+      "reason": "Admin Manual Top-Up",
+      "date": "27/08/2026, 22:54:54"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+20",
+      "balAfter": 20,
+      "reason": "Initial Account Balance",
+      "date": "27/08/2026, 22:54:54"
+    },
+    {
+      "username": "apex_streamer",
+      "change": "+100",
+      "balAfter": 220,
+      "reason": "Admin Manual Top-Up",
+      "date": "27/08/2026, 22:52:12"
+    },
+    {
+      "username": "reseller_demo",
+      "change": "-1",
+      "balAfter": 49,
+      "reason": "UID Activation (asdasd)",
+      "date": "27/08/2026, 22:49:23"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "-1",
+      "balAfter": 69,
+      "reason": "UID Activation (UID-RESELLER-1111)",
+      "date": "27/08/2026, 22:46:05"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+50",
+      "balAfter": 70,
+      "reason": "Admin Manual Top-Up",
+      "date": "27/08/2026, 22:46:05"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+20",
+      "balAfter": 20,
+      "reason": "Initial Account Balance",
+      "date": "27/08/2026, 22:46:05"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "-1",
+      "balAfter": 68,
+      "reason": "UID Activation (UID-RESELLER-1111)",
+      "date": "27/08/2026, 22:45:30"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+50",
+      "balAfter": 70,
+      "reason": "Admin Manual Top-Up",
+      "date": "27/08/2026, 22:45:30"
+    },
+    {
+      "username": "temp_reseller",
+      "change": "+20",
+      "balAfter": 20,
+      "reason": "Initial Account Balance",
+      "date": "27/08/2026, 22:45:30"
+    },
+    {
+      "username": "reseller_demo",
+      "change": "+50",
+      "balAfter": 50,
+      "reason": "Initial System Provision",
+      "date": "27/08/2026, 22:45:14"
+    },
+    {
+      "username": "apex_streamer",
+      "change": "+120",
+      "balAfter": 120,
+      "reason": "Partner License Grant",
+      "date": "27/08/2026, 22:45:14"
+    }
+  ]
+}

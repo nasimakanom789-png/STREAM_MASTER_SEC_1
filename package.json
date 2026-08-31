@@ -1,0 +1,30 @@
+{
+  "name": "stream-corp-ops-deck",
+  "version": "7.0.0",
+  "description": "STREAM CORPORATION — Ops Deck // Unified UID Access Engine",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'Build complete'",
+    "test": "node test/test_server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "stream-corporation",
+    "ops-deck",
+    "uid-access-engine",
+    "license-management"
+  ],
+  "author": "Stream Corporation",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.5.1"
+  }
+}

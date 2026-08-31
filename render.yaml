@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: stream-corp-ops-deck
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MASTER_ADMIN_KEY
+        value: STREAM_MASTER_SEC_2026
+      - key: SESSION_SECRET
+        generateValue: true
