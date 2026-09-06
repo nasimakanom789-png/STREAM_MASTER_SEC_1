@@ -20,14 +20,6 @@
       "note": "Auto Ingestion Bot",
       "permission_days": 30,
       "createdAt": "2026-08-27T16:45:14.496Z"
-    },
-    {
-      "username": "fast_provisioner",
-      "passwordHash": "$2a$10$OIIbA4qddPLTz4Gv/Gj0heg2hMHwQxsUshH3OzXGCvBgFwMDKrTvm",
-      "plainPassword": "fetcher123",
-      "note": "Fast 7-Day Access Worker",
-      "permission_days": 7,
-      "createdAt": "2026-08-27T16:45:14.496Z"
     }
   ],
   "licenses": [

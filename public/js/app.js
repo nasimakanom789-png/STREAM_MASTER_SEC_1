@@ -109,8 +109,10 @@
 
     // ===== 4. ONE SINGLE UNIFIED AUTO-DETECTING LOGIN =====
     let LOGIN_DESTINATION = 'default';
+    let CURRENT_LOGIN_TIER = 'master';
 
     function selectLoginTier(tier) {
+      CURRENT_LOGIN_TIER = tier;
       document.querySelectorAll('.tier-strip .tier-btn').forEach(btn => btn.classList.remove('active'));
       const activeBtn = document.getElementById('tier-btn-' + tier);
       if (activeBtn) activeBtn.classList.add('active');
@@ -183,7 +185,7 @@
         const res = await fetch('/unified/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ identifier, password })
+          body: JSON.stringify({ identifier, password, tier: CURRENT_LOGIN_TIER })
         });
         const data = await res.json();
 
@@ -1455,7 +1457,7 @@
           const res = await fetch('/unified/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ identifier: SESSION.username, password: SESSION.password })
+            body: JSON.stringify({ identifier: SESSION.username, password: SESSION.password, tier: 'api-user' })
           });
           const data = await res.json();
           if (res.ok && data.role === 'api_user') {
