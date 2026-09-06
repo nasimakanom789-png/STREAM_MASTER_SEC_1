@@ -4,21 +4,12 @@
   },
   "subadmins": [
     {
-      "username": "ww",
-      "passwordHash": "$2a$10$hYGy4iauhohSkipg89TXXOPUHnRYbL/dC/mybGllBXnWQjF4VB4KO",
-      "plainPassword": "11",
-      "note": "",
-      "credits": 0,
-      "createdAt": "2026-08-28T19:03:29.130Z"
-    },
-    {
-      "username": "arahi",
-      "passwordHash": "$2a$10$wytuIFcml.RTE0RZ6bKUkemhHcyl9BVwiaywoXMq78m8mJIPd4yhq",
-      "plainPassword": "111",
-      "note": "",
-      "credits": 17,
-      "createdAt": "2026-08-28T09:02:20.321Z",
-      "updatedAt": "2026-08-28T09:02:56.950Z"
+      "username": "1",
+      "passwordHash": "$2a$10$TWQXWobG0NqvzP6FyCJHFeNlGpBI79hKywfPoNVKRUaOwluh2tIpm",
+      "plainPassword": "1",
+      "note": "RAhi",
+      "credits": 100,
+      "createdAt": "2026-09-06T09:31:50.383Z"
     }
   ],
   "fetchers": [
@@ -97,6 +88,13 @@
     }
   ],
   "creditAuditLog": [
+    {
+      "username": "1",
+      "change": "+100",
+      "balAfter": 100,
+      "reason": "Initial Account Balance",
+      "date": "06/09/2026, 15:31:50"
+    },
     {
       "username": "arahi",
       "change": "-1",
@@ -286,5 +284,22 @@
       "reason": "Partner License Grant",
       "date": "27/08/2026, 22:45:14"
     }
-  ]
+  ],
+  "apiUsers": [
+    {
+      "username": "1",
+      "passwordHash": "$2a$10$xwOp.cu5fgEvJETL3sNBLebu/dgJJCo2r.1HstcApqjWyQIY6/pe.",
+      "plainPassword": "1",
+      "note": "",
+      "createdAt": "2026-09-06T09:24:28.552Z"
+    },
+    {
+      "username": "api_demo",
+      "passwordHash": "$2a$10$QQlkPZw.AyhOFqyNwWEd6O/uE1B1B6t5zoJjQljKoIybSjZG.kpH6",
+      "plainPassword": "api123",
+      "note": "Default API Console Operator",
+      "createdAt": "2026-09-06T09:23:18.470Z"
+    }
+  ],
+  "apiLicenses": []
 }

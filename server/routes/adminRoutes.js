@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
 const { verifyMasterAdmin } = require('../middleware/auth');
@@ -19,6 +19,10 @@ router.get('/list-fetchers', adminController.listFetchers);
 router.post('/create-fetcher', adminController.createFetcher);
 router.post('/update-fetcher-permission', adminController.updateFetcherPermission);
 router.post('/delete-fetcher', adminController.deleteFetcher);
+
+router.get('/list-api-users', adminController.listApiUsers);
+router.post('/create-api-user', adminController.createApiUser);
+router.post('/delete-api-user', adminController.deleteApiUser);
 
 router.post('/change-key', adminController.changeMasterKey);
 router.get('/db-status', adminController.dbStatus);

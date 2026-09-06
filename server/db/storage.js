@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const config = require('../config/config');
@@ -14,6 +14,7 @@ class StorageEngine {
       },
       subadmins: [],
       fetchers: [],
+      apiUsers: [],
       licenses: [],
       creditAuditLog: []
     };
@@ -38,6 +39,17 @@ class StorageEngine {
       if (fs.existsSync(DATA_FILE)) {
         const raw = fs.readFileSync(DATA_FILE, 'utf8');
         this.data = JSON.parse(raw);
+        if (!this.data.apiUsers) this.data.apiUsers = [];
+        if (this.data.apiUsers.length === 0) {
+          this.data.apiUsers.push({
+            username: 'api_demo',
+            passwordHash: await this.hashPassword('api123'),
+            plainPassword: 'api123',
+            note: 'Default API Console Operator',
+            createdAt: new Date().toISOString()
+          });
+          this.save();
+        }
         // Ensure master admin key exists
         if (!this.data.settings || !this.data.settings.master_admin_key) {
           this.data.settings = { master_admin_key: config.masterAdminKey };
@@ -234,6 +246,7 @@ class StorageEngine {
   getAllSubadmins() {
     return this.data.subadmins.map(s => ({
       username: s.username,
+      plainPassword: s.plainPassword || '',
       note: s.note,
       credits: s.credits || 0,
       createdAt: s.createdAt
@@ -291,6 +304,7 @@ class StorageEngine {
   getAllFetchers() {
     return this.data.fetchers.map(f => ({
       username: f.username,
+      plainPassword: f.plainPassword || '',
       note: f.note,
       permission_days: f.permission_days || 0,
       createdAt: f.createdAt
@@ -333,6 +347,75 @@ class StorageEngine {
     fetcher.updatedAt = new Date().toISOString();
     this.save();
     return fetcher;
+  }
+
+  // --- API CONSOLE USERS ---
+  getAllApiUsers() {
+    if (!this.data.apiUsers) this.data.apiUsers = [];
+    return this.data.apiUsers.map(u => ({
+      username: u.username,
+      plainPassword: u.plainPassword || '',
+      note: u.note,
+      createdAt: u.createdAt
+    }));
+  }
+
+  findApiUser(username) {
+    if (!this.data.apiUsers) this.data.apiUsers = [];
+    return this.data.apiUsers.find(u => u.username.toLowerCase() === (username || '').toLowerCase());
+  }
+
+  async addApiUser(username, password, note = '') {
+    if (!this.data.apiUsers) this.data.apiUsers = [];
+    const existing = this.findApiUser(username);
+    if (existing) return null;
+    const passwordHash = await this.hashPassword(password);
+    const apiUser = {
+      username,
+      passwordHash,
+      plainPassword: password,
+      note,
+      createdAt: new Date().toISOString()
+    };
+    this.data.apiUsers.unshift(apiUser);
+    this.save();
+    return apiUser;
+  }
+
+  deleteApiUser(username) {
+    if (!this.data.apiUsers) this.data.apiUsers = [];
+    const idx = this.data.apiUsers.findIndex(u => u.username.toLowerCase() === (username || '').toLowerCase());
+    if (idx === -1) return false;
+    this.data.apiUsers.splice(idx, 1);
+    this.save();
+    return true;
+  }
+
+  // --- API CONSOLE LICENSES (LOCAL PERSISTENCE & FALLBACK) ---
+  getAllApiLicenses() {
+    if (!this.data.apiLicenses) this.data.apiLicenses = [];
+    return [...this.data.apiLicenses];
+  }
+
+  findApiLicense(key) {
+    if (!this.data.apiLicenses) this.data.apiLicenses = [];
+    const k = (key || '').trim().toUpperCase();
+    return this.data.apiLicenses.find(l => (l.key || '').toUpperCase() === k || l.id === key);
+  }
+
+  addApiLicense(license) {
+    if (!this.data.apiLicenses) this.data.apiLicenses = [];
+    this.data.apiLicenses.unshift(license);
+    this.save();
+    return license;
+  }
+
+  updateApiLicense(key, updates) {
+    const l = this.findApiLicense(key);
+    if (!l) return null;
+    Object.assign(l, updates);
+    this.save();
+    return l;
   }
 
   // --- AUDIT LOG ---

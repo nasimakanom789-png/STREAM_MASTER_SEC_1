@@ -1,4 +1,4 @@
-﻿const storage = require('../db/storage');
+const storage = require('../db/storage');
 
 async function unifiedLogin(req, res) {
   const identifier = (req.body.identifier || '').trim();
@@ -49,6 +49,21 @@ async function unifiedLogin(req, res) {
           role: 'fetcher',
           username: fetcher.username,
           permission_days: fetcher.permission_days || 30
+        });
+      }
+    }
+  }
+
+  // 4. Check if identifier is an API Console User
+  if (identifier && password) {
+    const apiUser = storage.findApiUser(identifier);
+    if (apiUser) {
+      const match = await storage.comparePassword(password, apiUser.passwordHash || apiUser.plainPassword);
+      if (match) {
+        return res.json({
+          status: 'success',
+          role: 'api_user',
+          username: apiUser.username
         });
       }
     }

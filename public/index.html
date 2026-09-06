@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <title>STREAM CORPORATION | Ops Deck</title>
+  <title>RRR PANEL | Access Control</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,8 +30,10 @@
 
       <div class="term-body">
         <div class="term-brand">
-          <div class="term-emblem"><span class="term-emblem-text">SC</span></div>
-          <h1 class="term-title">STREAM <b>CORPORATION</b></h1>
+          <div class="term-emblem rrr-logo-wrap">
+            <img src="/rrr-logo.jpg" alt="RRR PANEL Logo" class="rrr-logo-img">
+          </div>
+          <h1 class="term-title">RRR <b>PANEL</b></h1>
           <div class="term-subtitle">// Unified UID Access Engine</div>
         </div>
 
@@ -39,12 +41,13 @@
           <div class="tier-btn t-amber active" id="tier-btn-master" onclick="selectLoginTier('master')" title="Select Master Admin tier"><span class="dot"></span><span class="lbl">Master</span></div>
           <div class="tier-btn t-teal" id="tier-btn-reseller" onclick="selectLoginTier('reseller')" title="Select Reseller tier"><span class="dot"></span><span class="lbl">Reseller</span></div>
           <div class="tier-btn t-violet" id="tier-btn-fetcher" onclick="selectLoginTier('fetcher')" title="Select Fetcher tier"><span class="dot"></span><span class="lbl">Fetcher</span></div>
+          <div class="tier-btn t-teal" id="tier-btn-api-user" onclick="selectLoginTier('api-user')" title="API Console Operator Login"><span class="dot"></span><span class="lbl">API User</span></div>
         </div>
 
         <div id="unified-login-form">
 
           <div class="form-group">
-            <span class="field-label">Identifier</span>
+            <span class="field-label" id="unified-id-label">Identifier</span>
             <div class="input-wrapper">
               <span class="input-icon">▸</span>
               <input type="text" id="unified-identifier-inp" class="field-custom" placeholder="Username or Master Secret Key" autocomplete="username">
@@ -52,7 +55,7 @@
           </div>
 
           <div class="form-group">
-            <span class="field-label">Password</span>
+            <span class="field-label" id="unified-pass-label">Password</span>
             <div class="input-wrapper">
               <span class="input-icon">▸</span>
               <input type="password" id="unified-password-inp" class="field-custom" placeholder="Optional for Master Key" autocomplete="current-password">
@@ -61,7 +64,7 @@
           </div>
 
           <button class="btn-red-primary" id="btn-unified-login" onclick="executeUnifiedLogin()">
-            <span>Access Control Panel</span>
+            <span id="btn-login-text">Access Control Panel</span>
           </button>
 
           <div class="auth-alert" id="alert-unified" style="display:none;"></div>
@@ -85,10 +88,12 @@
     <nav class="app-sidebar" id="main-sidebar">
 
       <div class="sidebar-brand">
-        <div class="sidebar-brand-icon">SC</div>
+        <div class="sidebar-brand-icon rrr-sidebar-logo">
+          <img src="/rrr-logo.jpg" alt="RRR" class="rrr-sidebar-img">
+        </div>
         <div class="brand-text-block">
-          <div class="brand-title-main">STREAM CORP</div>
-          <div class="brand-title-sub">Ops Deck</div>
+          <div class="brand-title-main">RRR PANEL</div>
+          <div class="brand-title-sub">Access Control</div>
         </div>
       </div>
 
@@ -109,9 +114,19 @@
           <span class="sidebar-text">Fetchers</span>
         </button>
 
+        <button class="nav-btn" id="nav-btn-api-users" style="display:none;" onclick="navigateTab('api-users')" title="Manage API Console Operators">
+          <div class="nav-icon-box" style="color:var(--teal);">👥</div>
+          <span class="sidebar-text">API Users</span>
+        </button>
+
         <button class="nav-btn" id="nav-btn-credit" style="display:none;" onclick="navigateTab('credit')">
           <div class="nav-icon-box">◆</div>
           <span class="sidebar-text">Credit Mgmt</span>
+        </button>
+
+        <button class="nav-btn" id="nav-btn-api" style="display:none;" onclick="navigateTab('api')" title="AuthCloud License API Console">
+          <div class="nav-icon-box" style="color:var(--teal);">📡</div>
+          <span class="sidebar-text">API Console</span>
         </button>
 
         <button class="nav-btn" id="nav-btn-settings" style="display:none;" onclick="navigateTab('settings')">
@@ -345,6 +360,61 @@
 
         </div>
 
+        <!-- TAB 3B: API CONSOLE USERS -->
+        <div id="view-tab-api-users" class="panel-view-tab">
+
+          <div class="dashboard-header">
+            <div class="header-title-box">
+              <div class="header-icon-badge" style="border-color:rgba(45,212,191,0.3); color:var(--teal); background:rgba(45,212,191,0.1);">👥</div>
+              <div>
+                <h1 class="header-heading">API Console <span>Users</span></h1>
+                <div class="header-subtext">Manage dedicated operator credentials for the License API Console</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="metrics-grid metrics-grid-3">
+            <div class="metric-card"><div class="metric-value teal" id="u-stat-total">—</div><div class="metric-label">Total API Users</div></div>
+            <div class="metric-card"><div class="metric-value green" id="u-stat-active">—</div><div class="metric-label">Active Operators</div></div>
+            <div class="metric-card"><div class="metric-value amber" id="u-stat-portal">Isolated</div><div class="metric-label">Portal Access Mode</div></div>
+          </div>
+
+          <div class="dashboard-grid-2">
+
+            <div class="dashboard-card">
+              <div class="card-head-title">Create API Console Operator</div>
+              <p style="font-size:11.5px; color:var(--ink-500); margin-bottom:12px;">This user will ONLY have access to the API Console upon login.</p>
+              <input type="text" id="u-inp-username" class="input-field-app" placeholder="Username (e.g. api_operator_1)">
+              <input type="text" id="u-inp-password" class="input-field-app" placeholder="Password (e.g. pass123)">
+              <input type="text" id="u-inp-note" class="input-field-app" placeholder="Operator Note or Client Name (Optional)">
+              <button class="app-btn btn-teal-action" onclick="mainCreateApiUserAction()"><span>Create API Console User</span></button>
+              <div class="inline-msg-box" id="msg-u-create"></div>
+            </div>
+
+            <div class="dashboard-card">
+              <div class="card-head-title">Delete Operator Account</div>
+              <p style="font-size:11.5px; color:var(--ink-500); margin-bottom:12px;">Revoke access for an API Console operator immediately.</p>
+              <input type="text" id="u-inp-del-user" class="input-field-app" placeholder="Username to Delete">
+              <button class="app-btn btn-danger-action" onclick="mainDeleteApiUserAction()"><span>Delete Operator Account</span></button>
+              <div class="inline-msg-box" id="msg-u-delete"></div>
+            </div>
+
+          </div>
+
+          <div class="table-toolbar">
+            <button class="app-btn btn-dark-action" style="width:auto; padding:10px 22px;" onclick="loadApiUsersAction()"><span>Refresh Operators</span></button>
+            <div class="search-input-box"><input type="text" id="u-search-box" placeholder="Filter API operators..." oninput="filterApiUsersTable()"></div>
+          </div>
+
+          <div class="table-container-card">
+            <table class="app-table">
+              <thead><tr><th>Username</th><th>Password</th><th>Assigned Role</th><th>Note</th><th>Created At</th><th>Actions</th></tr></thead>
+              <tbody id="m-tbody-api-users"><tr><td colspan="6" style="text-align:center; color:var(--ink-700); padding:30px;">Loading API Console Users...</td></tr></tbody>
+            </table>
+          </div>
+
+        </div>
+
         <!-- TAB 4: CREDIT MANAGEMENT -->
         <div id="view-tab-credit" class="panel-view-tab">
 
@@ -410,6 +480,114 @@
               <div class="inline-msg-box" id="msg-diag"></div>
             </div>
 
+          </div>
+
+        </div>
+
+        <!-- TAB 6: API CONSOLE -->
+        <div id="view-tab-api" class="panel-view-tab">
+
+          <div class="dashboard-header">
+            <div class="header-title-box">
+              <div class="header-icon-badge" style="border-color:var(--teal-line); color:var(--teal); background:rgba(45,212,191,0.1);">📡</div>
+              <div>
+                <h1 class="header-heading">License <span>API Console</span></h1>
+                <div class="header-subtext">AuthCloud REST License Engine • Proxy Gateway</div>
+              </div>
+            </div>
+            <div class="header-status-pill" id="api-status-badge">
+              <span class="status-dot-live"></span>
+              <span id="api-status-text">Gateway Online</span>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card"><div class="metric-value white" id="api-stat-total">—</div><div class="metric-label">Total Licenses</div></div>
+            <div class="metric-card"><div class="metric-value green" id="api-stat-unused">—</div><div class="metric-label">Unused Keys</div></div>
+            <div class="metric-card"><div class="metric-value blue" id="api-stat-used">—</div><div class="metric-label">Used / Active Keys</div></div>
+            <div class="metric-card"><div class="metric-value red" id="api-stat-banned">—</div><div class="metric-label">Banned Keys</div></div>
+          </div>
+
+          <div class="dashboard-grid-2">
+
+            <div class="dashboard-card">
+              <div class="card-head-title">Generate New License Key <span style="font-family:var(--f-mono); font-size:11px; color:var(--teal); font-weight:400;">(POST /create)</span></div>
+              <div style="display:flex; gap:10px; margin-bottom:12px;">
+                <div style="flex:2;">
+                  <label style="font-size:11px; color:var(--ink-500); font-family:var(--f-mono);">Duration</label>
+                  <select id="api-gen-duration" class="input-field-app" style="margin-top:4px;">
+                    <option value="1 Day">1 Day Validity</option>
+                    <option value="7 Days">7 Days Validity</option>
+                    <option value="15 Days">15 Days Validity</option>
+                    <option value="30 Days" selected>30 Days Validity</option>
+                    <option value="60 Days">60 Days Validity</option>
+                    <option value="90 Days">90 Days Validity</option>
+                    <option value="1 Year">1 Year Validity</option>
+                    <option value="Lifetime">Lifetime Validity</option>
+                  </select>
+                </div>
+                <div style="flex:1;">
+                  <label style="font-size:11px; color:var(--ink-500); font-family:var(--f-mono);">Count</label>
+                  <input type="number" id="api-gen-count" class="input-field-app" value="1" min="1" max="50" style="margin-top:4px;">
+                </div>
+              </div>
+              <input type="text" id="api-gen-note" class="input-field-app" placeholder="Order Note or Client Tag (Optional)">
+              <button class="app-btn btn-teal-action" id="btn-api-generate" onclick="apiExecuteCreateKey()"><span>Generate License Key</span></button>
+              <div class="inline-msg-box" id="msg-api-gen"></div>
+            </div>
+
+            <div class="dashboard-card">
+              <div class="card-head-title">License Operations <span style="font-family:var(--f-mono); font-size:11px; color:var(--amber); font-weight:400;">(HWID & Ban Control)</span></div>
+              <input type="text" id="api-op-key" class="input-field-app" placeholder="License Key (e.g. 9TKV-1YN7-4DC9-2YKC)">
+              <input type="text" id="api-op-reason" class="input-field-app" placeholder="Ban Reason (Optional)">
+              <div style="display:flex; gap:8px;">
+                <button class="app-btn btn-dark-action" style="flex:1;" onclick="apiExecuteInspectKey()"><span>Inspect</span></button>
+                <button class="app-btn btn-amber-action" style="flex:1;" onclick="apiExecuteResetHwid()"><span>Reset HWID</span></button>
+                <button class="app-btn btn-danger-action" style="flex:1;" onclick="apiExecuteBanToggle()"><span>Ban / Unban</span></button>
+              </div>
+              <div class="inline-msg-box" id="msg-api-op"></div>
+            </div>
+
+          </div>
+
+          <div class="table-toolbar">
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <button class="app-btn btn-dark-action" style="width:auto; padding:10px 18px;" onclick="loadApiConsoleData()"><span>Refresh Keys</span></button>
+              <button class="chip-btn active" id="api-chip-all" onclick="setApiFilter('all')">All (<span id="api-cnt-all">0</span>)</button>
+              <button class="chip-btn" id="api-chip-unused" onclick="setApiFilter('Unused')">Unused (<span id="api-cnt-unused">0</span>)</button>
+              <button class="chip-btn" id="api-chip-used" onclick="setApiFilter('Used')">Used (<span id="api-cnt-used">0</span>)</button>
+              <button class="chip-btn" id="api-chip-banned" onclick="setApiFilter('Banned')">Banned (<span id="api-cnt-banned">0</span>)</button>
+            </div>
+            <div class="search-input-box">
+              <input type="text" id="api-search-box" placeholder="Search by Key, HWID, User, or Note..." oninput="handleApiSearch()">
+            </div>
+          </div>
+
+          <div class="table-container-card">
+            <table class="app-table">
+              <thead>
+                <tr>
+                  <th>License Key</th>
+                  <th>Status</th>
+                  <th>Duration</th>
+                  <th>HWID Binding</th>
+                  <th>Assigned / User</th>
+                  <th>Note / Created By</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="api-tbody-licenses">
+                <tr><td colspan="7" style="text-align:center; color:var(--ink-700); padding:40px;">Connecting to License API...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="dashboard-card" style="margin-top:20px; background:#0a0c0f;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div class="card-head-title" style="margin:0; font-size:13px; color:var(--ink-500);">// Live REST Proxy Response Inspector</div>
+              <div id="api-terminal-status" style="font-family:var(--f-mono); font-size:11px; color:var(--teal);">Ready</div>
+            </div>
+            <pre id="api-json-inspector" style="background:#050608; border:1px solid rgba(255,255,255,0.06); border-radius:var(--r-md); padding:14px; color:#a78bfa; font-family:var(--f-mono); font-size:11px; max-height:220px; overflow-y:auto; margin:0; white-space:pre-wrap; word-break:break-all;">// Ready to inspect incoming API payloads.</pre>
           </div>
 
         </div>

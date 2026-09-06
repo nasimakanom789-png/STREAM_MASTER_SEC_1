@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Test Console | RRR PANEL License Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body {
+      background: var(--void);
+      color: var(--ink-100);
+      font-family: var(--f-body);
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    .test-shell {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 24px 60px;
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: rgba(20, 22, 26, 0.75);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-lg);
+      margin-bottom: 24px;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo-small {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--r-md);
+      overflow: hidden;
+      border: 1px solid var(--amber-line);
+      box-shadow: 0 0 16px rgba(255, 139, 61, 0.25);
+    }
+
+    .brand-logo-small img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .brand-heading {
+      font-family: var(--f-display);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-heading span {
+      color: var(--amber);
+    }
+
+    .brand-sub {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--ink-500);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .api-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--r-pill);
+      font-family: var(--f-mono);
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(45, 212, 191, 0.12);
+      border: 1px solid var(--teal-line);
+      color: var(--teal);
+    }
+
+    .api-badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 10px var(--teal);
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-box {
+      background: var(--deck);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .stat-box:hover {
+      border-color: var(--hairline-br);
+      transform: translateY(-2px);
+    }
+
+    .stat-num {
+      font-family: var(--f-display);
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--ink-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tool-card {
+      background: var(--deck);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-lg);
+      padding: 24px;
+    }
+
+    .tool-title {
+      font-family: var(--f-display);
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tool-title .tag {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: var(--r-pill);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--ink-300);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .inp-custom {
+      width: 100%;
+      background: var(--deck-input);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-md);
+      padding: 11px 14px;
+      color: var(--ink-100);
+      font-family: var(--f-mono);
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .inp-custom:focus {
+      border-color: var(--amber);
+      box-shadow: 0 0 12px rgba(255, 139, 61, 0.2);
+    }
+
+    .btn-action {
+      background: var(--amber);
+      color: #000;
+      font-family: var(--f-display);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 18px;
+      border-radius: var(--r-md);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      background: #ffa15d;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(255, 139, 61, 0.35);
+    }
+
+    .btn-action.btn-cyan {
+      background: var(--teal);
+    }
+    .btn-action.btn-cyan:hover {
+      background: #4ef0dc;
+      box-shadow: 0 4px 16px rgba(45, 212, 191, 0.35);
+    }
+
+    .btn-action.btn-outline {
+      background: transparent;
+      border: 1px solid var(--hairline-br);
+      color: var(--ink-100);
+    }
+    .btn-action.btn-outline:hover {
+      border-color: var(--ink-100);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-danger {
+      background: var(--alert);
+      color: #fff;
+    }
+    .btn-danger:hover {
+      background: #ff6868;
+      box-shadow: 0 4px 16px rgba(251, 75, 75, 0.35);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: var(--r-pill);
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .status-Unused {
+      background: rgba(45, 212, 191, 0.12);
+      border: 1px solid var(--teal-line);
+      color: var(--teal);
+    }
+    .status-Used {
+      background: rgba(94, 177, 255, 0.12);
+      border: 1px solid rgba(94, 177, 255, 0.4);
+      color: var(--blue);
+    }
+    .status-Banned {
+      background: rgba(251, 75, 75, 0.12);
+      border: 1px solid var(--alert-line);
+      color: var(--alert);
+    }
+
+    .key-badge {
+      font-family: var(--f-mono);
+      font-weight: 700;
+      color: var(--ink-100);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 4px 8px;
+      border-radius: var(--r-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copy-btn {
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: var(--ink-500);
+      font-size: 12px;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+    .copy-btn:hover {
+      color: var(--amber);
+    }
+
+    .table-card {
+      background: var(--deck);
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-lg);
+      padding: 24px;
+    }
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .filter-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chip-btn {
+      background: var(--deck-raised);
+      border: 1px solid var(--hairline);
+      color: var(--ink-500);
+      padding: 6px 14px;
+      border-radius: var(--r-pill);
+      font-family: var(--f-mono);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip-btn.active {
+      background: rgba(255, 139, 61, 0.14);
+      border-color: var(--amber-line);
+      color: var(--amber);
+    }
+
+    .search-wrap {
+      flex: 1;
+      max-width: 360px;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table.proxy-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    table.proxy-table th {
+      text-align: left;
+      padding: 12px 14px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-500);
+      border-bottom: 1px solid var(--hairline);
+      background: rgba(10, 11, 13, 0.4);
+    }
+
+    table.proxy-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--hairline);
+      vertical-align: middle;
+    }
+
+    table.proxy-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .action-btn-sm {
+      padding: 5px 10px;
+      font-size: 11px;
+      font-family: var(--f-mono);
+      font-weight: 600;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--hairline-br);
+      background: var(--deck-raised);
+      color: var(--ink-300);
+      cursor: pointer;
+      margin-right: 4px;
+      transition: all 0.15s;
+    }
+    .action-btn-sm:hover {
+      color: var(--ink-100);
+      border-color: var(--amber);
+    }
+
+    .action-btn-sm.btn-ban:hover {
+      border-color: var(--alert);
+      color: var(--alert);
+    }
+
+    .terminal-box {
+      margin-top: 24px;
+      background: #0d0f12;
+      border: 1px solid var(--hairline);
+      border-radius: var(--r-lg);
+      padding: 18px 20px;
+    }
+
+    .terminal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      color: var(--ink-500);
+    }
+
+    pre.json-view {
+      background: #07080a;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--r-md);
+      padding: 16px;
+      max-height: 280px;
+      overflow-y: auto;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      color: #a78bfa;
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .alert-toast {
+      padding: 12px 16px;
+      border-radius: var(--r-md);
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      animation: fadeIn 0.2s ease-out;
+    }
+    .alert-toast.success {
+      background: rgba(45, 212, 191, 0.15);
+      border: 1px solid var(--teal-line);
+      color: var(--teal);
+    }
+    .alert-toast.error {
+      background: rgba(251, 75, 75, 0.15);
+      border: 1px solid var(--alert-line);
+      color: var(--alert);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="test-shell">
+
+    <!-- Topbar -->
+    <header class="top-nav">
+      <div class="brand-section">
+        <div class="brand-logo-small">
+          <img src="/rrr-logo.jpg" alt="Logo">
+        </div>
+        <div>
+          <div class="brand-heading">RRR PANEL <span>API Console</span></div>
+          <div class="brand-sub">// AuthCloud License Gateway Proxy</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="api-badge" id="api-status-badge">
+          <span class="dot"></span>
+          <span id="api-status-text">Testing Connection...</span>
+        </div>
+        <a href="/" class="btn-action btn-outline" style="width: auto; padding: 8px 16px; text-decoration: none;">
+          ◂ Return to Portal
+        </a>
+      </div>
+    </header>
+
+    <div id="global-toast" class="alert-toast">
+      <span id="global-toast-msg"></span>
+      <button style="background:none; border:none; color:inherit; cursor:pointer;" onclick="hideToast()">✕</button>
+    </div>
+
+    <!-- Metrics Row -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-num" id="stat-total" style="color:var(--ink-100);">—</div>
+        <div class="stat-label">Total Licenses</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-unused" style="color:var(--teal);">—</div>
+        <div class="stat-label">Unused Keys</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-used" style="color:var(--blue);">—</div>
+        <div class="stat-label">Used / Active Keys</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-banned" style="color:var(--alert);">—</div>
+        <div class="stat-label">Banned Keys</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-hwid-locked" style="color:var(--amber);">—</div>
+        <div class="stat-label">HWID Locked</div>
+      </div>
+    </div>
+
+    <!-- Quick Actions & Generator Grid -->
+    <div class="tools-grid">
+
+      <!-- Create / Generate License -->
+      <div class="tool-card">
+        <div class="tool-title">
+          <span>Generate New License Key</span>
+          <span class="tag">POST /api/licenses/create</span>
+        </div>
+        <div class="form-row">
+          <div>
+            <label style="font-size: 11px; color: var(--ink-500); font-family: var(--f-mono);">Duration</label>
+            <select id="gen-duration" class="inp-custom" style="margin-top: 4px;">
+              <option value="1 Day">1 Day</option>
+              <option value="7 Days">7 Days</option>
+              <option value="15 Days">15 Days</option>
+              <option value="30 Days" selected>30 Days</option>
+              <option value="60 Days">60 Days</option>
+              <option value="90 Days">90 Days</option>
+              <option value="1 Year">1 Year</option>
+              <option value="Lifetime">Lifetime</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 11px; color: var(--ink-500); font-family: var(--f-mono);">Count</label>
+            <input type="number" id="gen-count" class="inp-custom" value="1" min="1" max="50" style="margin-top: 4px;">
+          </div>
+        </div>
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; color: var(--ink-500); font-family: var(--f-mono);">Client Note / Tag (Optional)</label>
+          <input type="text" id="gen-note" class="inp-custom" placeholder="e.g. VIP Order #1042" style="margin-top: 4px;">
+        </div>
+        <button class="btn-action" id="btn-generate" onclick="executeCreateKey()">
+          <span>Generate License Key</span>
+        </button>
+      </div>
+
+      <!-- Quick Action: Key Lookup, HWID Reset, Ban/Unban -->
+      <div class="tool-card">
+        <div class="tool-title">
+          <span>License Operations (Inspect, HWID, Ban)</span>
+          <span class="tag">POST / GET</span>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label style="font-size: 11px; color: var(--ink-500); font-family: var(--f-mono);">License Key or ID</label>
+          <input type="text" id="op-key" class="inp-custom" placeholder="e.g. 9TKV-1YN7-4DC9-2YKC" style="margin-top: 4px;">
+        </div>
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; color: var(--ink-500); font-family: var(--f-mono);">Ban Reason (if banning)</label>
+          <input type="text" id="op-reason" class="inp-custom" placeholder="Terms violation / fraud" style="margin-top: 4px;">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+          <button class="btn-action btn-outline" onclick="executeInspectKey()">Inspect</button>
+          <button class="btn-action btn-cyan" onclick="executeResetHwid()">Reset HWID</button>
+          <button class="btn-action btn-danger" onclick="executeBanToggle()">Ban / Unban</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Table Explorer -->
+    <div class="table-card">
+      <div class="filter-bar">
+        <div class="filter-chips">
+          <button class="chip-btn active" id="chip-all" onclick="setFilter('all')">All (<span id="cnt-all">0</span>)</button>
+          <button class="chip-btn" id="chip-unused" onclick="setFilter('Unused')">Unused (<span id="cnt-unused">0</span>)</button>
+          <button class="chip-btn" id="chip-used" onclick="setFilter('Used')">Used (<span id="cnt-used">0</span>)</button>
+          <button class="chip-btn" id="chip-banned" onclick="setFilter('Banned')">Banned (<span id="cnt-banned">0</span>)</button>
+        </div>
+        <div class="search-wrap">
+          <input type="text" id="tbl-search" class="inp-custom" placeholder="Search by Key, HWID, Note, Assigned..." oninput="handleSearch()">
+        </div>
+        <button class="btn-action btn-outline" style="width: auto; padding: 9px 18px;" onclick="loadAllLicenses()">
+          ↻ Refresh Table
+        </button>
+      </div>
+
+      <div class="table-scroll">
+        <table class="proxy-table">
+          <thead>
+            <tr>
+              <th>License Key</th>
+              <th>Status</th>
+              <th>Duration</th>
+              <th>Hardware ID (HWID)</th>
+              <th>Assigned To</th>
+              <th>Created By / Note</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="proxy-tbody">
+            <tr>
+              <td colspan="7" style="text-align: center; color: var(--ink-500); padding: 40px;">
+                Connecting to License Proxy...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Terminal Output -->
+    <div class="terminal-box">
+      <div class="terminal-head">
+        <div>// Live JSON Response Inspector</div>
+        <div id="terminal-status">Status: Idle</div>
+      </div>
+      <pre class="json-view" id="json-display">// Ready. Make an action to inspect raw response payload.</pre>
+    </div>
+
+  </div>
+
+  <script>
+    let allLicenses = [];
+    let currentFilter = 'all';
+
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('global-toast');
+      const text = document.getElementById('global-toast-msg');
+      toast.className = 'alert-toast ' + type;
+      text.innerText = msg;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 5000);
+    }
+
+    function hideToast() {
+      document.getElementById('global-toast').style.display = 'none';
+    }
+
+    function renderJson(data, label = 'Response') {
+      document.getElementById('json-display').innerText = JSON.stringify(data, null, 2);
+      document.getElementById('terminal-status').innerText = label + ' • ' + new Date().toLocaleTimeString();
+    }
+
+    async function checkHealth() {
+      try {
+        const res = await fetch('/api/licenses/status');
+        const data = await res.json();
+        if (data.proxy_status === 'online') {
+          document.getElementById('api-status-badge').style.borderColor = 'var(--teal-line)';
+          document.getElementById('api-status-text').innerText = 'API Connected (v' + (data.external_api?.version || '1.0') + ')';
+        } else {
+          document.getElementById('api-status-badge').style.borderColor = 'var(--alert-line)';
+          document.getElementById('api-status-text').innerText = 'API Degraded';
+        }
+      } catch (e) {
+        document.getElementById('api-status-badge').style.borderColor = 'var(--alert-line)';
+        document.getElementById('api-status-text').innerText = 'Connection Error';
+      }
+    }
+
+    async function loadAllLicenses() {
+      try {
+        const res = await fetch('/api/licenses');
+        const data = await res.json();
+        renderJson(data, 'GET /api/licenses');
+
+        if (data.success && Array.isArray(data.licenses)) {
+          allLicenses = data.licenses;
+          updateCounters(data.summary || {});
+          renderTable();
+        } else {
+          showToast(data.message || 'Failed to fetch licenses', 'error');
+        }
+      } catch (err) {
+        showToast('Network error while querying licenses', 'error');
+      }
+    }
+
+    function updateCounters(summary) {
+      const unused = allLicenses.filter(l => l.status === 'Unused').length;
+      const used = allLicenses.filter(l => l.status === 'Used').length;
+      const banned = allLicenses.filter(l => l.status === 'Banned').length;
+      const hwidLocked = allLicenses.filter(l => l.hwidLocked || (l.hwid && l.hwid !== 'None')).length;
+
+      document.getElementById('stat-total').innerText = allLicenses.length;
+      document.getElementById('stat-unused').innerText = unused;
+      document.getElementById('stat-used').innerText = used;
+      document.getElementById('stat-banned').innerText = banned;
+      document.getElementById('stat-hwid-locked').innerText = hwidLocked;
+
+      document.getElementById('cnt-all').innerText = allLicenses.length;
+      document.getElementById('cnt-unused').innerText = unused;
+      document.getElementById('cnt-used').innerText = used;
+      document.getElementById('cnt-banned').innerText = banned;
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('chip-' + filter.toLowerCase());
+      if (activeBtn) activeBtn.classList.add('active');
+      renderTable();
+    }
+
+    function handleSearch() {
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('proxy-tbody');
+      const query = (document.getElementById('tbl-search').value || '').trim().toLowerCase();
+
+      let filtered = allLicenses.filter(l => {
+        if (currentFilter !== 'all' && l.status !== currentFilter) return false;
+        if (!query) return true;
+        const key = (l.key || '').toLowerCase();
+        const note = (l.note || '').toLowerCase();
+        const hwid = (l.hwid || '').toLowerCase();
+        const assigned = (l.assignedTo || l.usedBy || '').toLowerCase();
+        return key.includes(query) || note.includes(query) || hwid.includes(query) || assigned.includes(query);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:36px; color:var(--ink-500);">No licenses found matching current filter.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(l => {
+        const isBanned = l.status === 'Banned';
+        const hwidDisplay = (!l.hwid || l.hwid === 'None') 
+          ? '<span style="color:var(--ink-500);">None</span>' 
+          : '<span style="font-family:var(--f-mono); font-size:11px; color:var(--amber);">' + l.hwid.slice(0, 16) + '...</span>';
+
+        return `
+          <tr>
+            <td>
+              <div class="key-badge">
+                <span>${l.key}</span>
+                <button class="copy-btn" onclick="copyText('${l.key}')" title="Copy Key">❐</button>
+              </div>
+            </td>
+            <td><span class="status-badge status-${l.status}">${l.status}</span></td>
+            <td><span style="font-family:var(--f-mono);">${l.duration || '—'}</span></td>
+            <td>${hwidDisplay}</td>
+            <td><span style="font-family:var(--f-mono); color:var(--ink-300);">${l.assignedTo || l.usedBy || '—'}</span></td>
+            <td>
+              <div style="font-size:12px; color:var(--ink-300);">${l.note || '—'}</div>
+              <div style="font-size:10px; color:var(--ink-500); font-family:var(--f-mono);">${l.createdBy || ''}</div>
+            </td>
+            <td>
+              <button class="action-btn-sm" onclick="selectForOp('${l.key}')">Select</button>
+              <button class="action-btn-sm" onclick="quickResetHwid('${l.key}')">Reset HWID</button>
+              <button class="action-btn-sm ${isBanned ? '' : 'btn-ban'}" onclick="quickToggleBan('${l.key}', ${isBanned})">
+                ${isBanned ? 'Unban' : 'Ban'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function selectForOp(key) {
+      document.getElementById('op-key').value = key;
+      executeInspectKey();
+    }
+
+    async function executeCreateKey() {
+      const duration = document.getElementById('gen-duration').value;
+      const count = parseInt(document.getElementById('gen-count').value, 10) || 1;
+      const note = document.getElementById('gen-note').value;
+      const btn = document.getElementById('btn-generate');
+
+      btn.disabled = true;
+      btn.innerText = 'Creating...';
+
+      try {
+        const res = await fetch('/api/licenses/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ duration, count, note })
+        });
+        const data = await res.json();
+        renderJson(data, 'POST /api/licenses/create');
+
+        if (data.success && data.licenses?.length > 0) {
+          const newKey = data.licenses[0].key;
+          showToast(`Successfully created key: ${newKey}`, 'success');
+          document.getElementById('op-key').value = newKey;
+          await loadAllLicenses();
+        } else {
+          showToast(data.message || 'Failed to create license key', 'error');
+        }
+      } catch (err) {
+        showToast('Network error while generating license key', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Generate License Key';
+      }
+    }
+
+    async function executeInspectKey() {
+      const key = (document.getElementById('op-key').value || '').trim();
+      if (!key) {
+        showToast('Please enter a license key to inspect', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/licenses/${encodeURIComponent(key)}`);
+        const data = await res.json();
+        renderJson(data, `GET /api/licenses/${key}`);
+
+        if (data.success && data.license) {
+          showToast(`Found license: ${data.license.key} (${data.license.status})`, 'success');
+        } else {
+          showToast(data.message || 'License key not found', 'error');
+        }
+      } catch (e) {
+        showToast('Network error while inspecting key', 'error');
+      }
+    }
+
+    async function executeResetHwid() {
+      const key = (document.getElementById('op-key').value || '').trim();
+      if (!key) return showToast('Please enter a license key to reset HWID', 'error');
+      await quickResetHwid(key);
+    }
+
+    async function quickResetHwid(key) {
+      try {
+        const res = await fetch('/api/licenses/reset-hwid', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key })
+        });
+        const data = await res.json();
+        renderJson(data, `POST /api/licenses/reset-hwid`);
+
+        if (data.success) {
+          showToast(`HWID reset successfully for: ${key}`, 'success');
+          await loadAllLicenses();
+        } else {
+          showToast(data.message || 'Failed to reset HWID', 'error');
+        }
+      } catch (e) {
+        showToast('Error resetting HWID', 'error');
+      }
+    }
+
+    async function executeBanToggle() {
+      const key = (document.getElementById('op-key').value || '').trim();
+      const reason = (document.getElementById('op-reason').value || '').trim() || 'Terms violation';
+      if (!key) return showToast('Please enter a license key', 'error');
+
+      const found = allLicenses.find(l => l.key === key);
+      const isBanned = found ? found.status === 'Banned' : false;
+      await quickToggleBan(key, isBanned, reason);
+    }
+
+    async function quickToggleBan(key, currentlyBanned, reason = 'Administrative ban') {
+      const endpoint = currentlyBanned ? '/api/licenses/unban' : '/api/licenses/ban';
+      const body = currentlyBanned ? { key } : { key, reason };
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        renderJson(data, `POST ${endpoint}`);
+
+        if (data.success) {
+          showToast(data.message || (currentlyBanned ? 'License unbanned' : 'License banned'), 'success');
+          await loadAllLicenses();
+        } else {
+          showToast(data.message || 'Operation failed', 'error');
+        }
+      } catch (e) {
+        showToast('Network error during ban/unban', 'error');
+      }
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text);
+      showToast(`Copied to clipboard: ${text}`, 'success');
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      checkHealth();
+      loadAllLicenses();
+    });
+  </script>
+</body>
+</html>

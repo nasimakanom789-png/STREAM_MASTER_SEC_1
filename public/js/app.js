@@ -108,6 +108,8 @@
     }
 
     // ===== 4. ONE SINGLE UNIFIED AUTO-DETECTING LOGIN =====
+    let LOGIN_DESTINATION = 'default';
+
     function selectLoginTier(tier) {
       document.querySelectorAll('.tier-strip .tier-btn').forEach(btn => btn.classList.remove('active'));
       const activeBtn = document.getElementById('tier-btn-' + tier);
@@ -115,26 +117,41 @@
 
       const idInp = document.getElementById('unified-identifier-inp');
       const passInp = document.getElementById('unified-password-inp');
+      const btnText = document.getElementById('btn-login-text');
       if (!idInp || !passInp) return;
 
       if (tier === 'master') {
-        idInp.value = 'STREAM_MASTER_SEC_2026';
+        LOGIN_DESTINATION = 'default';
+        idInp.value = 'RRRPANEL';
         passInp.value = '';
-        idInp.placeholder = 'Master Secret Key (e.g. STREAM_MASTER_SEC_2026)';
+        idInp.placeholder = 'Master Secret Key (e.g. RRRPANEL)';
         passInp.placeholder = 'Optional for Master Key';
-        notifyToast('Master Key loaded: STREAM_MASTER_SEC_2026');
+        if (btnText) btnText.textContent = 'Access Control Panel';
+        notifyToast('Master Key loaded: RRRPANEL');
       } else if (tier === 'reseller') {
+        LOGIN_DESTINATION = 'default';
         idInp.value = 'apex_streamer';
         passInp.value = 'reseller123';
         idInp.placeholder = 'Reseller Username (e.g. apex_streamer)';
         passInp.placeholder = 'Reseller Password';
+        if (btnText) btnText.textContent = 'Access Control Panel';
         notifyToast('Reseller account loaded: apex_streamer / reseller123');
       } else if (tier === 'fetcher') {
+        LOGIN_DESTINATION = 'default';
         idInp.value = 'fetcher_demo';
         passInp.value = 'fetcher123';
         idInp.placeholder = 'Fetcher Username (e.g. fetcher_demo)';
         passInp.placeholder = 'Fetcher Password';
+        if (btnText) btnText.textContent = 'Access Control Panel';
         notifyToast('Fetcher account loaded: fetcher_demo / fetcher123');
+      } else if (tier === 'api-user') {
+        LOGIN_DESTINATION = 'default';
+        idInp.value = '';
+        passInp.value = '';
+        idInp.placeholder = 'API Operator Username';
+        passInp.placeholder = 'API Operator Password';
+        if (btnText) btnText.textContent = 'Access API Console';
+        notifyToast('API User mode: Enter your operator credentials');
       }
       idInp.focus();
     }
@@ -186,6 +203,11 @@
             saveSession();
             notifyToast(`Welcome, Fetcher ${SESSION.username}`);
             launchWorkspaceView('fetcher');
+          } else if (data.role === 'api_user') {
+            SESSION = { role: 'api_user', adminKey: null, username: data.username || identifier, password: password };
+            saveSession();
+            notifyToast(`Welcome, API Operator ${SESSION.username}`);
+            launchWorkspaceView('api_user');
           }
         } else {
           alertEl.style.display = 'block';
@@ -215,6 +237,7 @@
       const navFetchers = document.getElementById('nav-btn-fetchers');
       const navCredit = document.getElementById('nav-btn-credit');
       const navSettings = document.getElementById('nav-btn-settings');
+      const navUidsBtn = document.getElementById('nav-btn-uids');
 
       const userDisplayName = document.getElementById('user-display-name');
       const userDisplayRole = document.getElementById('user-display-role');
@@ -226,17 +249,26 @@
         subPanel.classList.remove('active');
         fetcherPanel.classList.remove('active');
 
+        if (navUidsBtn) navUidsBtn.style.display = 'flex';
         navResellers.style.display = 'flex';
         navFetchers.style.display = 'flex';
         navCredit.style.display = 'flex';
-        navSettings.style.display = 'flex';
+        if (navSettings) navSettings.style.display = 'flex';
+        const navApiUsers = document.getElementById('nav-btn-api-users');
+        if (navApiUsers) navApiUsers.style.display = 'flex';
+        const navApi = document.getElementById('nav-btn-api');
+        if (navApi) navApi.style.display = 'flex';
 
         userDisplayName.textContent = 'ADMINISTRATOR';
         userDisplayRole.textContent = 'MASTER ADMIN';
         userAvatarIcon.textContent = 'A';
         userCreditsTag.style.display = 'none';
 
-        navigateTab('uids');
+        if (LOGIN_DESTINATION === 'api') {
+          navigateTab('api');
+        } else {
+          navigateTab('uids');
+        }
         mainFetchUIDs();
         loadResellersAction();
         loadFetchersAction();
@@ -251,6 +283,10 @@
         navFetchers.style.display = 'none';
         navCredit.style.display = 'none';
         navSettings.style.display = 'none';
+        const navApi = document.getElementById('nav-btn-api');
+        if (navApi) navApi.style.display = 'none';
+        const navApiUsers = document.getElementById('nav-btn-api-users');
+        if (navApiUsers) navApiUsers.style.display = 'none';
 
         userDisplayName.textContent = SESSION.username.toUpperCase();
         userDisplayRole.textContent = 'RESELLER';
@@ -267,7 +303,11 @@
         navResellers.style.display = 'none';
         navFetchers.style.display = 'none';
         navCredit.style.display = 'none';
-        navSettings.style.display = 'none';
+        if (navSettings) navSettings.style.display = 'none';
+        const navApiFetcher = document.getElementById('nav-btn-api');
+        if (navApiFetcher) navApiFetcher.style.display = 'none';
+        const navApiUsersFetcher = document.getElementById('nav-btn-api-users');
+        if (navApiUsersFetcher) navApiUsersFetcher.style.display = 'none';
 
         userDisplayName.textContent = SESSION.username.toUpperCase();
         userDisplayRole.textContent = 'FETCHER';
@@ -276,6 +316,31 @@
 
         fetcherFetchPermission();
         fetcherFetchUIDs();
+      } else if (role === 'api_user') {
+        // API User sees ONLY the API Console panel (inside master-admin-panel)
+        masterPanel.classList.add('active');
+        subPanel.classList.remove('active');
+        fetcherPanel.classList.remove('active');
+
+        // Hide all nav buttons except API Console
+        navResellers.style.display = 'none';
+        navFetchers.style.display = 'none';
+        navCredit.style.display = 'none';
+        if (navSettings) navSettings.style.display = 'none';
+        const navUids = document.getElementById('nav-btn-uids');
+        if (navUids) navUids.style.display = 'none';
+        const navApiUsers = document.getElementById('nav-btn-api-users');
+        if (navApiUsers) navApiUsers.style.display = 'none';
+        const navApiBtn = document.getElementById('nav-btn-api');
+        if (navApiBtn) navApiBtn.style.display = 'flex';
+
+        userDisplayName.textContent = SESSION.username.toUpperCase();
+        userDisplayRole.textContent = 'API OPERATOR';
+        userAvatarIcon.textContent = (SESSION.username[0] || 'U').toUpperCase();
+        userCreditsTag.style.display = 'none';
+
+        navigateTab('api');
+        loadApiConsoleData();
       }
     }
 
@@ -291,6 +356,8 @@
       if (tabName === 'resellers') loadResellersAction();
       if (tabName === 'fetchers') loadFetchersAction();
       if (tabName === 'credit') { loadResellersAction(); renderCreditLogView(); }
+      if (tabName === 'api') loadApiConsoleData();
+      if (tabName === 'api-users') loadApiUsersAction();
     }
 
     function executeLogout() {
@@ -1382,6 +1449,439 @@
         } catch (e) {}
         clearSession();
       }
+
+      if (SESSION.role === 'api_user' && SESSION.username && SESSION.password) {
+        try {
+          const res = await fetch('/unified/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ identifier: SESSION.username, password: SESSION.password })
+          });
+          const data = await res.json();
+          if (res.ok && data.role === 'api_user') {
+            launchWorkspaceView('api_user');
+            return;
+          }
+        } catch (e) {}
+        clearSession();
+      }
     });
+
+    // ===== 14. LICENSE API CONSOLE (PROXY GATEWAY) =====
+    let apiAllLicenses = [];
+    let apiCurrentFilter = 'all';
+
+    function logApiTerminal(data, label = 'API Response') {
+      const inspector = document.getElementById('api-json-inspector');
+      const statusText = document.getElementById('api-terminal-status');
+      if (inspector) inspector.innerText = JSON.stringify(data, null, 2);
+      if (statusText) statusText.innerText = label + ' • ' + new Date().toLocaleTimeString();
+    }
+
+    async function loadApiConsoleData() {
+      const tbody = document.getElementById('api-tbody-licenses');
+      if (tbody && apiAllLicenses.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--ink-500); padding:30px;">Connecting to License API Gateway...</td></tr>';
+      }
+
+      try {
+        const res = await fetch('/api/licenses');
+        const data = await res.json();
+        logApiTerminal(data, 'GET /api/licenses');
+
+        if (data.success && Array.isArray(data.licenses)) {
+          apiAllLicenses = data.licenses;
+          updateApiCounters();
+          renderApiLicensesTable();
+          const pill = document.getElementById('api-status-text');
+          if (pill) pill.innerText = `Connected (${data.total_count || apiAllLicenses.length} Keys)`;
+        } else {
+          notifyToast(data.message || 'Failed to load licenses from API');
+        }
+      } catch (err) {
+        notifyToast('Network error: Could not reach license proxy');
+      }
+    }
+
+    function updateApiCounters() {
+      const unused = apiAllLicenses.filter(l => l.status === 'Unused').length;
+      const used = apiAllLicenses.filter(l => l.status === 'Used').length;
+      const banned = apiAllLicenses.filter(l => l.status === 'Banned').length;
+
+      const elTotal = document.getElementById('api-stat-total');
+      const elUnused = document.getElementById('api-stat-unused');
+      const elUsed = document.getElementById('api-stat-used');
+      const elBanned = document.getElementById('api-stat-banned');
+
+      if (elTotal) elTotal.innerText = apiAllLicenses.length;
+      if (elUnused) elUnused.innerText = unused;
+      if (elUsed) elUsed.innerText = used;
+      if (elBanned) elBanned.innerText = banned;
+
+      const cAll = document.getElementById('api-cnt-all');
+      const cUnused = document.getElementById('api-cnt-unused');
+      const cUsed = document.getElementById('api-cnt-used');
+      const cBanned = document.getElementById('api-cnt-banned');
+
+      if (cAll) cAll.innerText = apiAllLicenses.length;
+      if (cUnused) cUnused.innerText = unused;
+      if (cUsed) cUsed.innerText = used;
+      if (cBanned) cBanned.innerText = banned;
+    }
+
+    function setApiFilter(filter) {
+      apiCurrentFilter = filter;
+      document.querySelectorAll('#view-tab-api .chip-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('api-chip-' + filter.toLowerCase());
+      if (activeBtn) activeBtn.classList.add('active');
+      renderApiLicensesTable();
+    }
+
+    function handleApiSearch() {
+      renderApiLicensesTable();
+    }
+
+    function renderApiLicensesTable() {
+      const tbody = document.getElementById('api-tbody-licenses');
+      if (!tbody) return;
+
+      const searchBox = document.getElementById('api-search-box');
+      const query = (searchBox ? searchBox.value : '').trim().toLowerCase();
+
+      let filtered = apiAllLicenses.filter(l => {
+        if (apiCurrentFilter !== 'all' && l.status !== apiCurrentFilter) return false;
+        if (!query) return true;
+        const k = (l.key || '').toLowerCase();
+        const n = (l.note || '').toLowerCase();
+        const h = (l.hwid || '').toLowerCase();
+        const u = (l.assignedTo || l.usedBy || '').toLowerCase();
+        return k.includes(query) || n.includes(query) || h.includes(query) || u.includes(query);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:36px; color:var(--ink-500);">No licenses found matching search / filter criteria.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(l => {
+        const isBanned = l.status === 'Banned';
+        let statusBadge = '<span class="status-badge badge-green">Unused</span>';
+        if (l.status === 'Used') statusBadge = '<span class="status-badge badge-blue">Used</span>';
+        else if (l.status === 'Banned') statusBadge = '<span class="status-badge badge-red">Banned</span>';
+
+        const hwidVal = (!l.hwid || l.hwid === 'None') 
+          ? '<span style="color:var(--ink-700);">None</span>' 
+          : `<span style="font-family:var(--f-mono); font-size:11px; color:var(--amber);" title="${l.hwid}">${l.hwid.slice(0, 16)}...</span>`;
+
+        return `
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span style="font-family:var(--f-mono); font-weight:700; color:var(--ink-100); background:rgba(255,255,255,0.06); padding:3px 8px; border-radius:var(--r-sm);">${l.key}</span>
+                <button class="action-btn-sm" onclick="apiCopyKey('${l.key}')" title="Copy Key">❐</button>
+              </div>
+            </td>
+            <td>${statusBadge}</td>
+            <td><span style="font-family:var(--f-mono); font-size:12px;">${l.duration || '—'}</span></td>
+            <td>${hwidVal}</td>
+            <td><span style="font-family:var(--f-mono); font-size:12px; color:var(--ink-300);">${l.assignedTo || l.usedBy || '—'}</span></td>
+            <td>
+              <div style="font-size:12px; color:var(--ink-300);">${l.note || '—'}</div>
+              <div style="font-size:10px; color:var(--ink-500); font-family:var(--f-mono);">${l.createdBy || ''}</div>
+            </td>
+            <td>
+              <button class="action-btn-sm" onclick="apiSelectKey('${l.key}')">Select</button>
+              <button class="action-btn-sm" onclick="apiQuickResetHwid('${l.key}')">Reset HWID</button>
+              <button class="action-btn-sm ${isBanned ? '' : 'btn-ban'}" onclick="apiQuickToggleBan('${l.key}', ${isBanned})">
+                ${isBanned ? 'Unban' : 'Ban'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function apiCopyKey(key) {
+      navigator.clipboard.writeText(key);
+      notifyToast('Copied license key: ' + key);
+    }
+
+    function apiSelectKey(key) {
+      const inp = document.getElementById('api-op-key');
+      if (inp) {
+        inp.value = key;
+        inp.focus();
+      }
+      apiExecuteInspectKey();
+    }
+
+    async function apiExecuteCreateKey() {
+      const duration = document.getElementById('api-gen-duration').value;
+      const count = parseInt(document.getElementById('api-gen-count').value, 10) || 1;
+      const note = document.getElementById('api-gen-note').value;
+      const msgBox = document.getElementById('msg-api-gen');
+      const btn = document.getElementById('btn-api-generate');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>Creating Key(s)...</span>';
+      if (msgBox) msgBox.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/licenses/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ duration, count, note })
+        });
+        const data = await res.json();
+        logApiTerminal(data, 'POST /api/licenses/create');
+
+        if (data.success && data.licenses?.length > 0) {
+          const newKey = data.licenses[0].key;
+          notifyToast(`Created key: ${newKey}`);
+          if (msgBox) {
+            msgBox.className = 'inline-msg-box success';
+            msgBox.style.display = 'block';
+            msgBox.innerHTML = `✓ Generated ${data.licenses.length} key(s)! Key: <b>${newKey}</b> <button class="action-btn-sm" onclick="apiCopyKey('${newKey}')" style="margin-left:6px;">Copy</button>`;
+          }
+          const opInp = document.getElementById('api-op-key');
+          if (opInp) opInp.value = newKey;
+          await loadApiConsoleData();
+        } else {
+          if (msgBox) {
+            msgBox.className = 'inline-msg-box error';
+            msgBox.style.display = 'block';
+            msgBox.textContent = '✗ ' + (data.message || 'Failed to create license key');
+          }
+        }
+      } catch (err) {
+        notifyToast('Network error while creating license key');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Generate License Key</span>';
+      }
+    }
+
+    async function apiExecuteInspectKey() {
+      const key = (document.getElementById('api-op-key')?.value || '').trim();
+      const msgBox = document.getElementById('msg-api-op');
+      if (!key) {
+        notifyToast('Please enter a license key to inspect');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/licenses/${encodeURIComponent(key)}`);
+        const data = await res.json();
+        logApiTerminal(data, `GET /api/licenses/${key}`);
+
+        if (data.success && data.license) {
+          notifyToast(`License: ${data.license.key} (${data.license.status})`);
+          if (msgBox) {
+            msgBox.className = 'inline-msg-box success';
+            msgBox.style.display = 'block';
+            msgBox.innerHTML = `✓ Status: <b>${data.license.status}</b> | Duration: ${data.license.duration || 'N/A'} | HWID: ${data.license.hwid || 'None'}`;
+          }
+        } else {
+          if (msgBox) {
+            msgBox.className = 'inline-msg-box error';
+            msgBox.style.display = 'block';
+            msgBox.textContent = '✗ ' + (data.message || 'License key not found');
+          }
+        }
+      } catch (e) {
+        notifyToast('Error querying license key');
+      }
+    }
+
+    async function apiExecuteResetHwid() {
+      const key = (document.getElementById('api-op-key')?.value || '').trim();
+      if (!key) {
+        notifyToast('Please enter a license key');
+        return;
+      }
+      await apiQuickResetHwid(key);
+    }
+
+    async function apiQuickResetHwid(key) {
+      try {
+        const res = await fetch('/api/licenses/reset-hwid', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key })
+        });
+        const data = await res.json();
+        logApiTerminal(data, 'POST /api/licenses/reset-hwid');
+
+        if (data.success) {
+          notifyToast(`HWID reset successful for: ${key}`);
+          await loadApiConsoleData();
+        } else {
+          notifyToast(data.message || 'HWID reset failed');
+        }
+      } catch (e) {
+        notifyToast('Network error while resetting HWID');
+      }
+    }
+
+    async function apiExecuteBanToggle() {
+      const key = (document.getElementById('api-op-key')?.value || '').trim();
+      const reason = (document.getElementById('api-op-reason')?.value || '').trim() || 'Terms violation';
+      if (!key) {
+        notifyToast('Please enter a license key');
+        return;
+      }
+
+      const found = apiAllLicenses.find(l => l.key === key);
+      const isBanned = found ? found.status === 'Banned' : false;
+      await apiQuickToggleBan(key, isBanned, reason);
+    }
+
+    // ===== 18. API CONSOLE USERS MANAGEMENT (MASTER ADMIN) =====
+    let apiUsersList = [];
+
+    async function loadApiUsersAction() {
+      const tbody = document.getElementById('m-tbody-api-users');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--ink-500); padding:24px;">Loading API Operators...</td></tr>';
+
+      try {
+        const res = await fetch('/admin/list-api-users?admin_key=' + encodeURIComponent(SESSION.adminKey));
+        const data = await res.json();
+
+        if (res.ok && data.api_users) {
+          apiUsersList = data.api_users;
+          renderApiUsersTable(apiUsersList);
+          const elTotal = document.getElementById('u-stat-total');
+          const elActive = document.getElementById('u-stat-active');
+          if (elTotal) elTotal.textContent = apiUsersList.length;
+          if (elActive) elActive.textContent = apiUsersList.length;
+        } else {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#fb4b4b; padding:24px;">Error: ${data.message || 'Failed to load'}</td></tr>`;
+        }
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#fb4b4b; padding:24px;">Connection error</td></tr>';
+      }
+    }
+
+    function renderApiUsersTable(list) {
+      const tbody = document.getElementById('m-tbody-api-users');
+      if (!tbody) return;
+      if (!list.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--ink-700); padding:30px;">No API Console operators found</td></tr>';
+        return;
+      }
+      tbody.innerHTML = list.map(u => `
+        <tr>
+          <td><span class="status-badge badge-green">${u.username}</span></td>
+          <td><span style="font-family:var(--f-mono); font-size:11px; color:var(--ink-500);">${u.password || '••••••'}</span></td>
+          <td><span class="status-badge badge-blue">API Operator</span></td>
+          <td style="color:var(--ink-500); font-size:11.5px;">${u.note || '—'}</td>
+          <td style="color:var(--ink-700); font-size:11px; font-family:var(--f-mono);">${u.created_at ? new Date(u.created_at).toLocaleDateString('en-GB') : '—'}</td>
+          <td>
+            <button class="btn-sm-action btn-sm-red" onclick="deleteApiUserDirectAction('${u.username}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterApiUsersTable() {
+      const q = (document.getElementById('u-search-box')?.value || '').toLowerCase();
+      const filtered = apiUsersList.filter(u =>
+        (u.username || '').toLowerCase().includes(q) ||
+        (u.note || '').toLowerCase().includes(q)
+      );
+      renderApiUsersTable(filtered);
+    }
+
+    async function mainCreateApiUserAction() {
+      const username = document.getElementById('u-inp-username').value.trim();
+      const password = document.getElementById('u-inp-password').value.trim();
+      const note = document.getElementById('u-inp-note').value.trim();
+
+      if (!username || !password) {
+        notifyToast('Username and Password are required', 'err');
+        showInlineMsg('msg-u-create', '✗ Username & Password required', 'err');
+        return;
+      }
+
+      try {
+        const res = await fetch('/admin/create-api-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ admin_key: SESSION.adminKey, username, password, note })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          notifyToast(`API Operator '${username}' created`);
+          showInlineMsg('msg-u-create', `✓ API Operator '${username}' created successfully`, 'ok');
+          document.getElementById('u-inp-username').value = '';
+          document.getElementById('u-inp-password').value = '';
+          document.getElementById('u-inp-note').value = '';
+          loadApiUsersAction();
+        } else {
+          showInlineMsg('msg-u-create', '✗ ' + (data.message || 'Error creating operator'), 'err');
+        }
+      } catch (err) {
+        showInlineMsg('msg-u-create', '✗ Connection error', 'err');
+      }
+    }
+
+    async function mainDeleteApiUserAction() {
+      const username = document.getElementById('u-inp-del-user').value.trim();
+      if (!username) {
+        notifyToast('Please enter a username to delete', 'err');
+        showInlineMsg('msg-u-delete', '✗ Username is required', 'err');
+        return;
+      }
+      await deleteApiUserDirectAction(username);
+      document.getElementById('u-inp-del-user').value = '';
+    }
+
+    async function deleteApiUserDirectAction(username) {
+      if (!confirm(`Delete API Operator '${username}'? This will revoke their access immediately.`)) return;
+      try {
+        const res = await fetch('/admin/delete-api-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ admin_key: SESSION.adminKey, username })
+        });
+        if (res.ok) {
+          notifyToast(`API Operator '${username}' deleted`);
+          showInlineMsg('msg-u-delete', `✓ Operator '${username}' removed`, 'ok');
+          loadApiUsersAction();
+        } else {
+          const d = await res.json();
+          notifyToast(d.message || 'Delete failed', 'err');
+        }
+      } catch (err) {
+        notifyToast('Connection error', 'err');
+      }
+    }
+
+    async function apiQuickToggleBan(key, isBanned, reason = 'Terms violation') {
+      const endpoint = isBanned ? '/api/licenses/unban' : '/api/licenses/ban';
+      const body = isBanned ? { key } : { key, reason };
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        logApiTerminal(data, `POST ${endpoint}`);
+
+        if (data.success) {
+          notifyToast(isBanned ? `Key unbanned: ${key}` : `Key banned: ${key}`);
+          await loadApiConsoleData();
+        } else {
+          notifyToast(data.message || 'Ban/Unban action failed');
+        }
+      } catch (e) {
+        notifyToast('Network error during ban action');
+      }
+    }
+
   
 

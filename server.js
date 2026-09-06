@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const config = require('./server/config/config');
@@ -8,6 +8,7 @@ const authRoutes = require('./server/routes/authRoutes');
 const adminRoutes = require('./server/routes/adminRoutes');
 const resellerRoutes = require('./server/routes/resellerRoutes');
 const fetcherRoutes = require('./server/routes/fetcherRoutes');
+const licenseProxyRoutes = require('./server/routes/licenseProxyRoutes');
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/subadmin', resellerRoutes);
 app.use('/fetcher', fetcherRoutes);
+app.use('/api/licenses', licenseProxyRoutes);
+app.use('/lib/api/licenses', licenseProxyRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -33,6 +36,11 @@ app.get('/health', (req, res) => {
     version: config.appVersion,
     timestamp: new Date().toISOString()
   });
+});
+
+// Dedicated API Test Console UI
+app.get('/api-test', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'api-test.html'));
 });
 
 // Single Page Application Fallback

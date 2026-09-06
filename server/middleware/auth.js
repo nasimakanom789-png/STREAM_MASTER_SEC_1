@@ -1,4 +1,4 @@
-﻿const storage = require('../db/storage');
+const storage = require('../db/storage');
 
 async function verifyMasterAdmin(req, res, next) {
   const adminKey = req.body.admin_key || req.query.admin_key;
@@ -75,8 +75,40 @@ async function verifyFetcher(req, res, next) {
   next();
 }
 
+async function verifyApiUser(req, res, next) {
+  const username = req.body.username || req.query.username;
+  const password = req.body.password || req.query.password;
+
+  if (!username || !password) {
+    return res.status(403).json({
+      status: 'error',
+      message: 'Unauthorized: Username and Password required'
+    });
+  }
+
+  const apiUser = storage.findApiUser(username);
+  if (!apiUser) {
+    return res.status(403).json({
+      status: 'error',
+      message: 'Unauthorized: API User account not found'
+    });
+  }
+
+  const isMatch = await storage.comparePassword(password, apiUser.passwordHash || apiUser.plainPassword);
+  if (!isMatch) {
+    return res.status(403).json({
+      status: 'error',
+      message: 'Unauthorized: Invalid credentials'
+    });
+  }
+
+  req.apiUser = apiUser;
+  next();
+}
+
 module.exports = {
   verifyMasterAdmin,
   verifyReseller,
-  verifyFetcher
+  verifyFetcher,
+  verifyApiUser
 };

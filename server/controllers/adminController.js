@@ -1,4 +1,4 @@
-﻿const storage = require('../db/storage');
+const storage = require('../db/storage');
 
 function listLicenses(req, res) {
   const licenses = storage.getAllLicenses();
@@ -266,6 +266,56 @@ function dbStatus(req, res) {
   });
 }
 
+function listApiUsers(req, res) {
+  const users = storage.getAllApiUsers();
+  return res.json({
+    status: 'success',
+    users
+  });
+}
+
+async function createApiUser(req, res) {
+  const { username, password, note } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ status: 'error', message: 'Username and password are required' });
+  }
+
+  const existing = storage.findApiUser(username.trim());
+  if (existing) {
+    return res.status(400).json({ status: 'error', message: `API User '${username.trim()}' already exists` });
+  }
+
+  const created = await storage.addApiUser(username.trim(), password.trim(), (note || '').trim());
+  return res.json({
+    status: 'success',
+    message: `API User '${username.trim()}' created successfully`,
+    user: {
+      username: created.username,
+      plainPassword: created.plainPassword,
+      note: created.note,
+      createdAt: created.createdAt
+    }
+  });
+}
+
+function deleteApiUser(req, res) {
+  const { username } = req.body;
+  if (!username) {
+    return res.status(400).json({ status: 'error', message: 'Username is required' });
+  }
+
+  const deleted = storage.deleteApiUser(username.trim());
+  if (!deleted) {
+    return res.status(404).json({ status: 'error', message: `API User '${username}' not found` });
+  }
+
+  return res.json({
+    status: 'success',
+    message: `API User '${username}' deleted`
+  });
+}
+
 module.exports = {
   listLicenses,
   createLicense,
@@ -279,6 +329,9 @@ module.exports = {
   createFetcher,
   updateFetcherPermission,
   deleteFetcher,
+  listApiUsers,
+  createApiUser,
+  deleteApiUser,
   changeMasterKey,
   dbStatus
 };

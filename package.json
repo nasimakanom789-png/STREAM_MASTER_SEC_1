@@ -7,7 +7,9 @@
     "start": "node server.js",
     "dev": "node server.js",
     "build": "echo 'Build complete'",
-    "test": "node test/test_server.js"
+    "test": "node test/test_license_proxy.js",
+    "test:proxy": "node test/test_license_proxy.js",
+    "test:server": "node test/test_server.js"
   },
   "engines": {
     "node": ">=18.0.0"
